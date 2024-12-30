@@ -8,11 +8,14 @@ Download, Compile and Install linux kernel by yourself the easy way.
 
 --------------------------------------------------------------------
 
-#Version BETA . THIS IS A WORK IN PROGRESS.
+Version BETA . THIS IS A WORK IN PROGRESS.
+-----------
 
-#DOES NOT INSTALL RC VERSIONS.
+DOES NOT INSTALL RC VERSIONS.
+-----------
 
-#!!! MAKE HEADERS DO NOT WORK !!!
+!!! MAKE HEADERS DO NOT WORK !!!
+-----------
 
 Absolutely NO pre-compiled software or kernel here.
 
