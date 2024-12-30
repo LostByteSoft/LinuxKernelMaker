@@ -1,4 +1,4 @@
-# LinuxKernelMaker
+#LinuxKernelMaker
 The one step to make compile, install and more.
 
 Linux Kernel Maker
@@ -8,9 +8,11 @@ Download, Compile and Install linux kernel by yourself the easy way.
 
 --------------------------------------------------------------------
 
-Version BETA . THIS IS A WORK IN PROGRESS . STILL PROBLEMS .
+#Version BETA . THIS IS A WORK IN PROGRESS.
 
-DOES NOT INSTALL RC VERSIONS
+#DOES NOT INSTALL RC VERSIONS.
+
+#!!! MAKE HEADERS DO NOT WORK !!!
 
 Absolutely NO pre-compiled software or kernel here.
 
@@ -21,7 +23,7 @@ https://www.kernel.org/
 
 Step 2. Struggle a little bit (but it's easier to do)
 
-Be sure ALL files in the same folder.
+Be sure files in the same folder.
 
 ![Screenshot](tree_1.jpg)
 
@@ -82,10 +84,8 @@ OPEN EACH FILE BEFORE EXECUTING, SOME VAR NEED TO BE CHANGED.
 	ALL in one compile and install.
 	Will do everything and check for errors.
 
-	ALL AUTOMATIC is not activated by default.
-	Because of it's implication on the host system.
+	Because of it'S implication on the host system this is not activated by default.
 	automatic=0 , change it on line 26 to automatic=1 FOR FULL AUTO.
-
 	WORKING ON IT !!! FULL Automatic mode (NO input at all)
 
 
