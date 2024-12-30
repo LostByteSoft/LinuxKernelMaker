@@ -23,7 +23,7 @@ echo -------------------------===== Start of bash ====-------------------------
 	primeerror=0	## ending error detector
 	
 	## All variables must be 0 or 1
-	automatic=0	## automatic without (at least minimal) dialog box.
+	automatic=1	## automatic without (at least minimal) dialog box.
 	noquit=1	## noquit option. (0 or 1)
 
 	## Auto-generated variables. Do not change
@@ -161,15 +161,15 @@ echo "The core/code program. Compile linux kernel."
 
 ## skip sections
 	## 01_install_compilers
-	skipinstalcomp=0
+	skipinstalcomp=1
 	## 03_verifypgp
-	skipgpg=0
+	skipgpg=1
 	## 06_compilekernel
 	skipcompilekernel=0
 	## 07_signkernelmodules
 	skipsignkernelmodules=0
 	## 08_makeinstall
-	skipmakeinstall=0
+	skipmakeinstall=1
 	## 09-makeheaders
 	skipheaders=1
 	
@@ -220,24 +220,25 @@ echo "The core/code program. Compile linux kernel."
 		echo "	Not empty full automatic operation."
 		sudopasswordvar=1
 		#echo $sudopassword
-		echo $sudopasswordvar
+		#echo $sudopasswordvar
 	else
 		echo "	Empty normal mode. Ask for sudo pass."
 		sudopasswordvar=0
 		#echo $sudopassword
-		echo $sudopasswordvar
+		#echo $sudopasswordvar
 	fi
-
+	
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 01_install_compilers.sh
 	echo
 	install=0
-	echo "Operation(s) :"
 	echo Verify installed requirements.
-	echo
 	if [ "$skipinstalcomp" -eq 0 ]; then
-		if [ $automatic -eq 0 ] ; then
+	echo "Operation(s) :"
+	echo "if command -v XXXX >/dev/null 2>&1"
+	echo
+	if [ $automatic -eq 0 ] ; then
 		echo Press ENTER key to continue !
 		read name
 		fi
@@ -324,8 +325,6 @@ echo 01_install_compilers.sh
 		sudo apt-get install xsel -y
 		echo
 		fi
-	else
-		echo "Software check/install skip. (All OK or debug mode.)"
 	fi
 
 part=$((part+1))
@@ -402,12 +401,12 @@ echo "-------------------------===== Section $part =====------------------------
 echo 03_verifypgp.sh
 	echo
 	echo "Verify pgp for signed kernel."
+	if [ "$skipgpg" -eq 0 ]; then
 	echo
 	echo "Operation(s) :"
 	echo "gpg2 --locate-keys torvalds@kernel.org gregkh@kernel.org"
 	echo "xz -cd $var.tar.xz | gpg2 --verify $var.tar.sign -"
 	echo
-	if [ "$skipgpg" -eq 0 ]; then
 		if [ $automatic -eq 0 ] ; then
 			echo "Press ENTER key to continue !"
 			read name
@@ -431,8 +430,6 @@ echo 03_verifypgp.sh
 			echo 'DEBUG xz -cd $var.tar.xz | gpg2 --verify $var.tar.sign -'
 			echo 'DEBUG xz -cd $var.tar.xz | gpg2 --verify $var.tar.sign -'
 		fi
-	else
-		echo "gpg2 verification skip."
 	fi
 	echo
 
@@ -451,11 +448,12 @@ echo 04_configboot.sh
 	echo
 	if command -v xsel >/dev/null 2>&1
 		then
-			echo CONFIG_DEBUG_INFO_BTF=n
-			echo
 			echo This data is in clipboard.
 			printf "CONFIG_DEBUG_INFO_BTF=" | xclip -sel clip
+			echo CONFIG_DEBUG_INFO_BTF=
+			echo 
 		else
+			echo "Modify this variable:"
 			echo CONFIG_DEBUG_INFO_BTF=n
 			echo
 		fi
@@ -468,20 +466,18 @@ echo 04_configboot.sh
 			sudo cp -v /boot/config-$(uname -r) $dir/$var/.config
 			sudo gedit $dir/$var/.config
 		else
-			cat /home/master/Desktop/kernel-v3/linux-6.12.7/.config | sed -e "s/CONFIG_DEBUG_INFO_BTF=y/CONFIG_DEBUG_INFO_BTF=n/" > /dev/shm/configMOD
-			cp -f /dev/shm/configMOD /home/master/Desktop/kernel-v3/linux-6.12.7/.config
-#automatic replace			
-#Create temporary file with new line in place
-#cat /home/master/Desktop/kernel-v3/linux-6.12.7/.config | sed -e "s/CONFIG_DEBUG_INFO_BTF=y/CONFIG_DEBUG_INFO_BTF=n/" > /dev/shm/configMOD
-#Copy the new file over the original file
-#cp -f /dev/shm/configMOD /home/master/Desktop/kernel-v3/linux-6.12.7/.config
+echo $sudopassword | sudo -S cp -v /boot/config-$(uname -r) $dir/$var/.config
+cat $dir/$var/.config | sed -e "s/CONFIG_DEBUG_INFO_BTF=y/CONFIG_DEBUG_INFO_BTF=n/" > /dev/shm/configMOD
+echo $sudopassword | sudo -S cp -f /dev/shm/configMOD $dir/$var/.config
 			fi
 		else
 			echo DEBUG cp -v /boot/config-$(uname -r) "$dir/$var"/.config
 			echo DEBUG gedit $dir/$var/.config
 		fi
 	echo
+	
 
+		
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 05_makemenuconfig.sh
@@ -501,7 +497,9 @@ echo 05_makemenuconfig.sh
 					sudo make menuconfig
 					cd ..
 				else
-					echo "Bypass automatic."
+					cd $dir/$var
+					sudo make menuconfig
+					cd ..
 				fi
 		else
 			echo DEBUG sudo make menuconfig
@@ -511,28 +509,25 @@ echo 05_makemenuconfig.sh
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 06_compilekernel.sh
+	echo
 	skipcompilekernel=0
 	if [ "$skipcompilekernel" -eq 0 ]; then
 	if [ "$debug" -eq 1 ]; then
 		debug
 		echo "	Cores : $cores"
 		echo "	skipcompilekernel=$skipcompilekernel"
-		fi
-	FILE=$dir/$var/vmlinux
-		if [ -f $FILE ]; then
-		skipcompilekernel=1
-		fi
 		echo
-	FILE=$dir/$var/vmlinux.a
-		if [ -f $FILE ]; then
-		skipcompilekernel=1
 		fi
-		echo
-	FILE=$dir/$var/vmlinux.o
-		if [ -f $FILE ]; then
-		skipcompilekernel=1
-		fi
-	echo "Compile a Linux Kernel with $cores core. (Approx 60 min.)"
+		if [ -f $dir/$var/vmlinux ]; then
+			skipcompilekernel=1
+			fi
+		if [ -f $dir/$var/vmlinux.a ]; then
+			skipcompilekernel=1
+			fi
+		if [ -f $dir/$var/vmlinux.o ]; then
+			skipcompilekernel=1
+			fi
+	echo "Compile a Linux Kernel with $cores core. SILENT MODE (Approx 60 min.)"
 	echo
 	echo "Operation(s) :"
 	echo sudo make -s -j $cores
@@ -556,8 +551,8 @@ echo 06_compilekernel.sh
 			fi
 		else
 			echo DEBUG sudo make -s -j $cores
+			echo
 		fi
-	echo
 	FILE=$dir/$var/vmlinux
 	if [ -f $FILE ]; then
 		echo "${green}██ File $FILE exists. OK ██ ${reset}"
@@ -606,8 +601,8 @@ part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 07_signkernelmodules.sh
 	echo
-	if [ "$skipsignkernelmodules" -eq 0 ]; then
 	echo "Sign the Linux kernel modules. (Approx 3 min.)"
+	if [ "$skipsignkernelmodules" -eq 0 ]; then
 	echo
 	echo "Operation(s) :"
 	echo sudo make modules_install
@@ -654,8 +649,8 @@ echo 08_makeinstall.sh
 		esac
 		done
 		}
-	if [ "$skipmakeinstall" -eq 0 ]; then
 	echo "Make install new kernel. If green you need to reboot. (Approx. 2 min.)"
+	if [ "$skipmakeinstall" -eq 0 ]; then
 	echo
 	echo "Operation(s) :"
 	echo sudo make install

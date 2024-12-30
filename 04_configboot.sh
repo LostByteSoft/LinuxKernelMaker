@@ -262,11 +262,7 @@ echo 04_configboot.sh
 		else
 			cat /home/master/Desktop/kernel-v3/linux-6.12.7/.config | sed -e "s/CONFIG_DEBUG_INFO_BTF=y/CONFIG_DEBUG_INFO_BTF=n/" > /dev/shm/configMOD
 			cp -f /dev/shm/configMOD /home/master/Desktop/kernel-v3/linux-6.12.7/.config
-#automatic replace			
-#Create temporary file with new line in place
-#cat /home/master/Desktop/kernel-v3/linux-6.12.7/.config | sed -e "s/CONFIG_DEBUG_INFO_BTF=y/CONFIG_DEBUG_INFO_BTF=n/" > /dev/shm/configMOD
-#Copy the new file over the original file
-#cp -f /dev/shm/configMOD /home/master/Desktop/kernel-v3/linux-6.12.7/.config
+
 			fi
 		else
 			echo DEBUG cp -v /boot/config-$(uname -r) "$dir/$var"/.config
