@@ -161,9 +161,9 @@ echo "The core/code program. Compile linux kernel."
 
 ## skip sections
 	## 01_install_compilers
-	skipinstalcomp=1
+	skipinstalcomp=0
 	## 03_verifypgp
-	skipgpg=1
+	skipgpg=0
 	## 06_compilekernel
 	skipcompilekernel=0
 	## 07_signkernelmodules
@@ -171,7 +171,7 @@ echo "The core/code program. Compile linux kernel."
 	## 08_makeinstall
 	skipmakeinstall=0
 	## 09-makeheaders
-	skipheaders=0
+	skipheaders=1
 	
 ## Define kernel version to compile
 	var=linux-6.12.7
@@ -267,6 +267,19 @@ echo 01_install_compilers.sh
 		install=1
 		echo
 	fi
+	if command -v xsel >/dev/null 2>&1
+	then
+		echo "xsel installed continue."
+		dpkg -s xsel | grep Version
+		echo "${green} ████████████████ OK ████████████████ ${reset}"
+		echo
+	else
+		echo "You don't have ' xsel ' installed."
+		echo
+		echo "${red}████████████████ Dependency error ████████████████${reset}"
+		install=1
+		echo
+	fi
 	FILE3=/usr/share/doc/libssl-dev
 	if test -d $FILE3 ; then
 	echo "${green} ████████████ File $FILE3 exists. ████████████ ${reset}"
@@ -308,6 +321,7 @@ echo 01_install_compilers.sh
 		sudo apt-get install build-essential -y
 		sudo apt-get install libncurses-dev -y
 		sudo apt-get install libelf-dev -y
+		sudo apt-get install xsel -y
 		echo
 		fi
 	else

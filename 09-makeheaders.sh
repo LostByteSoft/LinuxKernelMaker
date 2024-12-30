@@ -161,9 +161,9 @@ echo "The core/code program. Compile linux kernel."
 
 ## skip sections
 	## 01_install_compilers
-	skipinstalcomp=1
+	skipinstalcomp=0
 	## 03_verifypgp
-	skipgpg=1
+	skipgpg=0
 	## 06_compilekernel
 	skipcompilekernel=0
 	## 07_signkernelmodules
