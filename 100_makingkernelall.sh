@@ -536,7 +536,7 @@ echo 06_compilekernel.sh
 			else
 				cd $dir/$var
 				#echo $sudopassword | sudo -S make -s -j $cores	## Allow N jobs at once, -s silent
-				echo $sudopassword | sudo -S make -j $cores	## Allow N jobs at once, faster with -j $cores
+				echo $sudopassword | sudo -S make -s -j $cores	## Allow N jobs at once, faster with -j $cores
 				#sudo make -s		## infinite jobs with no arg, -s silent
 				cd ..
 			fi

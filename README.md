@@ -35,61 +35,63 @@ Files and what they do ?
 --------------------------------------------------------------------
 
 readme.md
-	Used for ReadMe and version to compile.
-	Write the kernel version you want to compile on the frst line.
+Used for ReadMe and version to compile.
+Write the kernel version you want to compile on the frst line.
 
 
 OPEN EACH FILE BEFORE EXECUTING, SOME VAR NEED TO BE CHANGED.
 
+![Screenshot](var_1.jpg)
 
 -Step BY step compilation and install.
 
 01_install_compilers.sh
-	Install tools to mak kernel.
+Install tools to make kernel.
 
 02_extract.sh
-	Extract archive.
+Extract archive: tar vxf "$var".tar.xz
 
 03_verifypgp.sh
-	Non-mandatory operation.
-	verify pgp.
+Non-mandatory operation.
+verify pgp: xz -cd $var.tar.xz | gpg2 --verify $var.tar.sign -
 
 04_configboot.sh
-	Copy your boot options in config.
+Copy your boot options in config: sudo cp -v /boot/config-$(uname -r) "$dir"/"$var"/.config
 
 05_makemenuconfig.sh
-	make menuconfig
+make menuconfig: sudo make menuconfig
 
 06_compilekernel.sh
-	Compile linux kernel
+Compile linux kernel: sudo make -s -j 8
 
 07_signkernelmodules.sh
-	sudo make modules_install
+sudo make modules_install: sudo make modules_install
 
 08_makeinstall.sh
-	Install kernel to system
+Install kernel to system: sudo make install
 
 09-makeheaders.sh
-	Non-mandatory operation.
-	Make headers for your drivers or extra.
+Non-mandatory operation.
+Make headers for your drivers or extra: sudo make headers_install ARCH=x86_64 INSTALL_HDR_PATH=/usr/src/
 
 10_informations.sh
-	Check after reboot the running kernel
+Check the running kernel: uname -r
 
 11-virtualbox.sh
-	Must execute 10-makeheaders.sh before this.
-	Execute sudo /sbin/vboxconfig for virtualbox.
+Must execute 10-makeheaders.sh before this.
+Execute sudo /sbin/vboxconfig for virtualbox.
 
 -ALL in ONE compilation and install.
 
 100_makingkernelall.sh
-	Write kernel version on this file (See picture)
-	ALL in one compile and install.
-	Will do everything and check for errors.
+Write kernel version on this file (See picture)
+ALL in one compile and install.
+Will do everything and check for errors.
 
-	Because of it'S implication on the host system this is not activated by default.
+	automatic=1 is not activated by default.
+	Because of it's implication on the host system.
 	automatic=0 , change it on line 26 to automatic=1 FOR FULL AUTO.
-	WORKING ON IT !!! FULL Automatic mode (NO input at all)
+	FULL Automatic mode (NO input at all)
 
 
 Create/check entry with grub-customizer and reboot.
