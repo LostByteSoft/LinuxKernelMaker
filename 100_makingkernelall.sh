@@ -23,7 +23,7 @@ echo -------------------------===== Start of bash ====-------------------------
 	primeerror=0	## ending error detector
 	
 	## All variables must be 0 or 1
-	automatic=1	## automatic without (at least minimal) dialog box.
+	automatic=0	## automatic without (at least minimal) dialog box.
 	noquit=1	## noquit option. (0 or 1)
 
 	## Auto-generated variables. Do not change
