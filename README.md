@@ -34,12 +34,7 @@ Be sure files in the same folder.
 Files and what they do ?
 --------------------------------------------------------------------
 
-readme.md
-Used for ReadMe and version to compile.
-Write the kernel version you want to compile on the frst line.
-
-
-OPEN EACH FILE BEFORE EXECUTING, SOME VAR NEED TO BE CHANGED.
+OPEN EACH FILE BEFORE EXECUTING, SOME VARIABLES NEED TO BE CHANGED.
 
 ![Screenshot](var_1.jpg)
 
