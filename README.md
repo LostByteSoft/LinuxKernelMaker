@@ -23,7 +23,7 @@ Step 2. Struggle a little bit (but it's easier to do)
 
 Be sure ALL files in the same folder.
 
-![Screenshot](tree.jpg)
+![Screenshot](tree_1.jpg)
 
 
 Files and what they do ?
