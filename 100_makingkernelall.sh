@@ -44,18 +44,18 @@ echo -------------------------===== Start of bash ====-------------------------
 	echo
 	echo "Running job file :"
 	echo
-	echo $(dirname "$0")/$me
+	echo "$(dirname "$0")/$me"
 	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo Software name, what is this, version, informations.
 	echo
-	echo ALL in one compile and install.
-	echo Will do everything and check for errors.
-	echo 20 gb of free space is needed.
+	echo "ALL in one compile and install."
+	echo "Will do everything and check for errors."
+	echo "20 gb of free space is needed."
 	echo
-	echo Optimised for 6.X versions of kernels.
+	echo "Optimised for 6.X versions of kernels."
 	echo
 	echo "Informations : (EULA at the end of file, open in text.)"
 	echo "By LostByteSoft, no copyright or copyleft. https://github.com/LostByteSoft"
@@ -95,8 +95,8 @@ echo "Functions codes and color"
 
 	echo 	"Function ${red}█████${reset} Error detector. Errorlevel show error msg."
 
-	error()
-	if [ "$?" -ge 1 ]; then
+	error() {
+	if [ "$error" -ge 1 ]; then
 		noquit=1
 		primeerror=$((primeerror+1))
 		primeerror=1
@@ -110,6 +110,7 @@ echo "Functions codes and color"
 		read -n 1 -s -r -p "Press any key to CONTINUE"
 		echo
 		fi
+		}
 
 	if [ "$automatic" -eq "1" ]; then
 		echo
@@ -148,7 +149,7 @@ echo "Functions codes and color"
 			done
 			echo
 		else
-			echo ${blue} ████████████████████ DEBUG skip ALL BARS ████████████████████${reset}
+			echo "${blue} ████████████████████ DEBUG skip ALL BARS ████████████████████${reset}"
 		fi
 		}
 
@@ -161,7 +162,7 @@ echo "The core/code program. Compile linux kernel."
 
 ## skip sections
 	## 01_install_compilers
-	skipinstalcomp=1
+	skipinstalcomp=0
 	## 03_verifypgp
 	skipgpg=1
 	## 06_compilekernel
@@ -208,35 +209,39 @@ echo "The core/code program. Compile linux kernel."
 	if [ $automatic -eq 1 ] ; then
 		debug
 		echo
+		echo "01_install_compilers skipinstalcomp=$skipinstalcomp 03_verifypgp skipgpg=$skipgpg"
+		echo "06_compilekernel skipcompilekernel=$skipcompilekernel 07_signkernelmodules skipsignkernelmodules=$skipsignkernelmodules"
+		echo "08_makeinstall skipmakeinstall=$skipmakeinstall 09-makeheaders skipheaders=$skipheaders"
+		echo
 		echo "	Verify if variables are good. For fewer asking questions.."
 		echo "	If you don't want this change variable automatic=0 on line 26."
 		echo "	Press ENTER key to continue ! (Compile kernel all step.)"
 		sudopassword=$(zenity --entry --width 500 --height 100 \
-		--title "Make Linux Kernel Automatic"  --text "Enter the SUDO password for full automatic. Enter nothing for normal mode.")
+		--title "Make Linux Kernel Automatic"  --text "Enter the SUDO password for full automatic. Enter nothing for normal mode. (or press Cancel.)")
 	fi
-
-
 	if [ -n "$sudopassword" ]; then
 		echo "	Not empty full automatic operation."
 		sudopasswordvar=1
 		#echo $sudopassword
 		#echo $sudopasswordvar
 	else
-		echo "	Empty normal mode. Ask for sudo pass."
+		echo "	Empty normal mode, ask for sudo pass."
 		sudopasswordvar=0
 		#echo $sudopassword
 		#echo $sudopasswordvar
 	fi
+	echo
 	
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 01_install_compilers.sh
-	echo
+	start1=$SECONDS
 	install=0
+	echo
 	echo Verify installed requirements.
 	if [ "$skipinstalcomp" -eq 0 ]; then
 	echo "Operation(s) :"
-	echo "if command -v XXXX >/dev/null 2>&1"
+	echo "	if command -v XXXX >/dev/null 2>&1"
 	echo
 	if [ $automatic -eq 0 ] ; then
 		echo Press ENTER key to continue !
@@ -323,13 +328,18 @@ echo 01_install_compilers.sh
 		sudo apt-get install libncurses-dev -y
 		sudo apt-get install libelf-dev -y
 		sudo apt-get install xsel -y
-		echo
 		fi
 	fi
+	echo
+	echo "	Time needed $(( SECONDS - start1 )) seconds to complete operation."
+	date1=$(date -d@$(( SECONDS - start1 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date1"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 02_extract.sh
+	start2=$SECONDS
 	echo
 	echo "https://www.cyberciti.biz/tips/compiling-linux-kernel-26.html"
 	echo "Get the latest Linux kernel source code"
@@ -339,8 +349,8 @@ echo 02_extract.sh
 	echo "same folder of $me"
 	echo
 	echo "Operation(s) :"
-	echo tar vxf "$var".tar.xz
-	echo cp "$var".tar.sign TO FOLDER "$var"
+	echo "	tar vxf "$var".tar.xz"
+	echo "	cp "$var".tar.sign TO FOLDER "$var""
 	echo
 	if [ -f "$FILEtarxz" ]; then
 		echo "${green} ████████████████ $FILEtarxz FILE OK ████████████████ ${reset}"
@@ -395,17 +405,22 @@ echo 02_extract.sh
 		echo DEBUG cp "$var".tar.sign "$var"
 		echo
 	fi
+	echo "	Time needed $(( SECONDS - start2 )) seconds to complete operation."
+	date2=$(date -d@$(( SECONDS - start2 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date2"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 03_verifypgp.sh
+	start3=$SECONDS
 	echo
 	echo "Verify pgp for signed kernel."
 	if [ "$skipgpg" -eq 0 ]; then
 	echo
 	echo "Operation(s) :"
-	echo "gpg2 --locate-keys torvalds@kernel.org gregkh@kernel.org"
-	echo "xz -cd $var.tar.xz | gpg2 --verify $var.tar.sign -"
+	echo "	gpg2 --locate-keys torvalds@kernel.org gregkh@kernel.org"
+	echo "	xz -cd $var.tar.xz | gpg2 --verify $var.tar.sign -"
 	echo
 		if [ $automatic -eq 0 ] ; then
 			echo "Press ENTER key to continue !"
@@ -432,31 +447,29 @@ echo 03_verifypgp.sh
 		fi
 	fi
 	echo
+	echo "	Time needed $(( SECONDS - start3 )) seconds to complete operation."
+	date3=$(date -d@$(( SECONDS - start3 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date3"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 04_configboot.sh
+	start4=$SECONDS
 	echo
 	echo "Copy the Linux kernel features and modules (From the pre-existing file)"
 	echo
 	echo "Operation(s) :"
-	echo sudo cp -v /boot/config-$(uname -r) "$dir"/"$var"/.config
-	echo sudo gedit ""$dir"/"$var"/.config"
+	echo "	sudo cp -v /boot/config-$(uname -r) "$dir"/"$var"/.config"
+	echo "	sudo gedit ""$dir"/"$var"/.config""
 	echo
 	echo "You need to change this line in the .config file"
 	echo "File "$var"/.config will open in sudo"
 	echo
-	if command -v xsel >/dev/null 2>&1
-		then
-			echo This data is in clipboard.
-			printf "CONFIG_DEBUG_INFO_BTF=" | xclip -sel clip
-			echo CONFIG_DEBUG_INFO_BTF=
-			echo 
-		else
-			echo "Modify this variable:"
-			echo CONFIG_DEBUG_INFO_BTF=n
-			echo
-		fi
+	echo "This data is in clipboard."
+	printf "CONFIG_DEBUG_INFO_BTF=" | xclip -sel clip
+	echo "CONFIG_DEBUG_INFO_BTF="
+	echo
 	if [ $automatic -eq 0 ] ; then
 		echo "Press ENTER key to continue ! "
 		read name
@@ -466,26 +479,29 @@ echo 04_configboot.sh
 			sudo cp -v /boot/config-$(uname -r) $dir/$var/.config
 			sudo gedit $dir/$var/.config
 		else
-echo $sudopassword | sudo -S cp -v /boot/config-$(uname -r) $dir/$var/.config
-cat $dir/$var/.config | sed -e "s/CONFIG_DEBUG_INFO_BTF=y/CONFIG_DEBUG_INFO_BTF=n/" > /dev/shm/configMOD
-echo $sudopassword | sudo -S cp -f /dev/shm/configMOD $dir/$var/.config
+	echo $sudopassword | sudo -S cp -v /boot/config-$(uname -r) $dir/$var/.config
+	cat $dir/$var/.config | sed -e "s/CONFIG_DEBUG_INFO_BTF=y/CONFIG_DEBUG_INFO_BTF=n/" > /dev/shm/configMOD
+	echo $sudopassword | sudo -S cp -f /dev/shm/configMOD $dir/$var/.config
 			fi
 		else
 			echo DEBUG cp -v /boot/config-$(uname -r) "$dir/$var"/.config
 			echo DEBUG gedit $dir/$var/.config
 		fi
 	echo
-	
-
+	echo "	Time needed $(( SECONDS - start4 )) seconds to complete operation."
+	date4=$(date -d@$(( SECONDS - start4 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date4"
+	echo
 		
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 05_makemenuconfig.sh
+	start5=$SECONDS
 	echo
 	echo "Configuring the new "$var" kernel. (Approx. 10 sec.)"
 	echo
 	echo "Operation(s) :"
-	echo sudo make menuconfig
+	echo "	sudo make menuconfig"
 	echo
 	if [ $automatic -eq 0 ] ; then
 		echo "Press ENTER key to continue !"
@@ -505,38 +521,46 @@ echo 05_makemenuconfig.sh
 			echo DEBUG sudo make menuconfig
 			echo
 		fi
+	echo "	Time needed $(( SECONDS - start5 )) seconds to complete operation."
+	date5=$(date -d@$(( SECONDS - start5 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date5"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 06_compilekernel.sh
-	echo
+	start6=$SECONDS
+	start61=$SECONDS
 	skipcompilekernel=0
-	if [ "$skipcompilekernel" -eq 0 ]; then
+	skipcompilekernel1=0
+	echo
 	if [ "$debug" -eq 1 ]; then
 		debug
 		echo "	Cores : $cores"
 		echo "	skipcompilekernel=$skipcompilekernel"
+		echo "	skipcompilekernel1=$skipcompilekernel1"
 		echo
 		fi
 		if [ -f $dir/$var/vmlinux ]; then
-			skipcompilekernel=1
+			skipcompilekernel1=1
 			fi
 		if [ -f $dir/$var/vmlinux.a ]; then
-			skipcompilekernel=1
+			skipcompilekernel1=1
 			fi
 		if [ -f $dir/$var/vmlinux.o ]; then
-			skipcompilekernel=1
+			skipcompilekernel1=1
 			fi
+	if [ "$skipcompilekernel" -eq 0 ]; then
 	echo "Compile a Linux Kernel with $cores core. SILENT MODE (Approx 60 min.)"
 	echo
 	echo "Operation(s) :"
-	echo sudo make -s -j $cores
+	echo "	sudo make -s -j $cores (-s SILENT COMPILE -j CORE(S))"
 	echo
 	if [ $automatic -eq 0 ] ; then
-		echo "Press ENTER key to continue ! SILENT MODE"
+		echo "Press ENTER key to continue."
 		read name
 		fi
-	if [ "$debug" -eq 0 ]; then
+	if [ "$skipcompilekernel1" -eq 0 ]; then
 			if [ $sudopasswordvar -eq 0 ] ; then
 				cd $dir/$var
 				sudo make -s -j $cores	## Allow N jobs at once, faster than sudo make -s
@@ -544,14 +568,20 @@ echo 06_compilekernel.sh
 				cd ..
 			else
 				cd $dir/$var
-				#echo $sudopassword | sudo -S make -s -j $cores	## Allow N jobs at once, -s silent
-				echo $sudopassword | sudo -S make -s -j $cores	## Allow N jobs at once, faster with -j $cores
-				#sudo make -s		## infinite jobs with no arg, -s silent
+				#echo $sudopassword | sudo -S make -s		## -s silent
+				echo $sudopassword | sudo -S make -s -j $cores	## faster with -j $cores
 				cd ..
 			fi
 		else
-			echo DEBUG sudo make -s -j $cores
+			echo "	FILES vmlinux vmlinux.a vmlinux.o ALREADY in folder"
+			echo "	$dir/$var"
+			echo "	Erase them to compile new ones."
+			echo "	FILES vmlinux vmlinux.a vmlinux.o PRECOMPILED will be used."
 			echo
+			if [ $automatic -eq 0 ] ; then
+				echo "Press ENTER key to continue !"
+				read name
+				fi
 		fi
 	FILE=$dir/$var/vmlinux
 	if [ -f $FILE ]; then
@@ -580,7 +610,7 @@ echo 06_compilekernel.sh
 			echo
 			echo "	${red}████████████████████████████████████████████${reset}"
 			echo "	${red}██                                        ██${reset}"
-			echo "	${red}██       ERROR MODULES NOT COMPILED       ██${reset}"
+			echo "	${red}██       ERROR KERNEL NOT COMPILED        ██${reset}"
 			echo "	${red}██                                        ██${reset}"
 			echo "	${red}████████████████████████████████████████████${reset}"
 			echo
@@ -592,45 +622,60 @@ echo 06_compilekernel.sh
 			debug=1
 		else
 			echo
-			echo "Everything is green you can continue."
+			echo "	${green}████████████████████████████████████████████${reset}"
+			echo "	${green}██                                        ██${reset}"
+			echo "	${green}██  Everything is green you can continue. ██${reset}"
+			echo "	${green}██                                        ██${reset}"
+			echo "	${green}████████████████████████████████████████████${reset}"
 			echo
 		fi
 	fi
+	echo "	Time needed $(( SECONDS - start6 )) seconds to complete operation."
+	date6=$(date -d@$(( SECONDS - start6 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date6"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 07_signkernelmodules.sh
+	start7=$SECONDS
 	echo
 	echo "Sign the Linux kernel modules. (Approx 3 min.)"
 	if [ "$skipsignkernelmodules" -eq 0 ]; then
-	echo
-	echo "Operation(s) :"
-	echo sudo make modules_install
-	echo
+		echo
+		echo "Operation(s) :"
+		echo "	sudo make modules"
+		#echo sudo make modules_install ## will install in system use option 08
+		echo
 	if [ $automatic -eq 0 ] ; then
 		echo "Press ENTER key to continue !"
 		read name
 		fi
 	if [ "$sudopasswordvar" -eq 0 ]; then
 			cd $dir/$var
-			sudo make modules_install
+			sudo make modules
 			cd ..
 		else
 			cd $dir/$var
-			echo $sudopassword | sudo -S make modules_install
+			echo $sudopassword | sudo -S make modules
 			cd ..
 		fi
 	echo
 	fi
+	echo "	Time needed $(( SECONDS - start7 )) seconds to complete operation."
+	date7=$(date -d@$(( SECONDS - start7 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date7"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 08_makeinstall.sh
-	echo
+	start8=$SECONDS
 	a=config-$sub
 	b=initrd.img-$sub
 	c=System.map-$sub
 	d=vmlinuz-$sub
+	echo
 	if [ "$debug" -eq 1 ]; then
 		debug
 		echo "	a = $a"
@@ -649,17 +694,17 @@ echo 08_makeinstall.sh
 		esac
 		done
 		}
+if [ "$skipmakeinstall" -eq 0 ]; then
 	echo "Make install new kernel. If green you need to reboot. (Approx. 2 min.)"
-	if [ "$skipmakeinstall" -eq 0 ]; then
-	echo
-	echo "Operation(s) :"
-	echo sudo make install
-	echo "Kernel to install in system $var"
-	echo
-	if [ $automatic -eq 0 ] ; then
-		echo "Press ENTER key to continue !"
-		read name
-		fi
+		echo
+		echo "Operation(s) :"
+		echo "	sudo make install"
+		echo "	Kernel to install in system $var"
+		echo
+		if [ $automatic -eq 0 ] ; then
+			echo "Press ENTER key to continue !"
+			read name
+			fi
 	if [ "$automatic" -eq 0 ]; then
 		yes_or_no
 			if [ "$?" -eq 0 ]; then
@@ -671,7 +716,7 @@ echo 08_makeinstall.sh
 				echo NOT INSTALLED.
 			fi
 	else
-			if [ "$sudopasswordvar" -eq 0 ]; then
+				if [ "$sudopasswordvar" -eq 0 ]; then
 					echo INSTALL IN SYSTEM.
 					cd $dir/$var
 					echo $sudopassword | sudo -S make install
@@ -715,7 +760,7 @@ echo 08_makeinstall.sh
 	echo "${red}████████████████ File $d does not exist ERROR ████████████████${reset}"
 	primeerror=1
 	fi
-	if [ "$primeerror" -eq 1 ]; then
+		if [ "$primeerror" -eq 1 ]; then
 			echo
 			echo "	${red}████████████████████████████████████████████${reset}"
 			echo "	${red}██                                        ██${reset}"
@@ -729,13 +774,20 @@ echo 08_makeinstall.sh
 		else
 			echo
 			echo "Everything is green new kernel is installed."
-			echo
 		fi
+	else
+	echo "Make install new kernel. Skip"
 	fi
+	echo
+	echo "	Time needed $(( SECONDS - start8 )) seconds to complete operation."
+	date8=$(date -d@$(( SECONDS - start8 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date8"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo  09-makeheaders.sh
+	start9=$SECONDS
 	echo
 	linuxheaders=linux-headers-$sub
 	if [ "$skipheaders" -eq 0 ]; then
@@ -751,7 +803,7 @@ echo  09-makeheaders.sh
 			echo
 			fi
 	echo "Operation(s) :"
-	echo sudo make headers_install ARCH=x86_64 INSTALL_HDR_PATH=/usr/src/$linuxheaders
+	echo "	sudo make headers_install ARCH=x86_64 INSTALL_HDR_PATH=/usr/src/$linuxheaders"
 	## sudo make headers_install ARCH=x86_64 INSTALL_HDR_PATH=/usr/src/linux-headers-6.12.7
 	echo
 	if [ $automatic -eq 0 ] ; then
@@ -781,9 +833,13 @@ echo  09-makeheaders.sh
 	fi
 	echo
 	else
-		echo "Headers compile skip."
+		echo "Make headers compile. Skip."
 		echo
 	fi
+	echo "	Time needed $(( SECONDS - start9 )) seconds to complete operation."
+	date9=$(date -d@$(( SECONDS - start9 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date9"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
@@ -797,12 +853,21 @@ echo 10_informations.sh
 	uname -r
 	echo
 	if [ "$primeerror" -eq "0" ]; then
+		if [ "$skipmakeinstall" -eq 0 ]; then
 		echo "	${blue}████████████████████████████████████████████${reset}"
 		echo "	${blue}██                                        ██${reset}"
 		echo "	${blue}██              NEED REBOOT               ██${reset}"
 		echo "	${blue}██                                        ██${reset}"
 		echo "	${blue}████████████████████████████████████████████${reset}"
 		echo
+		else
+		echo "	${blue}████████████████████████████████████████████${reset}"
+		echo "	${blue}██                                        ██${reset}"
+		echo "	${blue}██       Compiled but not installed       ██${reset}"
+		echo "	${blue}██                                        ██${reset}"
+		echo "	${blue}████████████████████████████████████████████${reset}"
+		echo
+		fi
 	else
 		echo "	${red}████████████████████████████████████████████${reset}"
 		echo "	${red}██                                        ██${reset}"

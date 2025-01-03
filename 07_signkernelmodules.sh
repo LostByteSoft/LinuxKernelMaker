@@ -244,11 +244,11 @@ echo 07_signkernelmodules.sh
 		fi
 	if [ "$sudopasswordvar" -eq 0 ]; then
 			cd $dir/$var
-			sudo make modules_install
+			sudo make modules
 			cd ..
 		else
 			cd $dir/$var
-			echo $sudopassword | sudo -S make modules_install
+			echo $sudopassword | sudo -S make modules
 			cd ..
 		fi
 	echo

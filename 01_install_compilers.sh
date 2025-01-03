@@ -227,7 +227,7 @@ echo "The core/code program. Compile linux kernel."
 		#echo $sudopassword
 		echo $sudopasswordvar
 	fi
-
+	
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 01_install_compilers.sh
