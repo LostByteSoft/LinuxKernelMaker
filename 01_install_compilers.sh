@@ -231,13 +231,15 @@ echo "The core/code program. Compile linux kernel."
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 01_install_compilers.sh
-	echo
+	start1=$SECONDS
 	install=0
-	echo "Operation(s) :"
-	echo Verify installed requirements.
 	echo
+	echo Verify installed requirements.
 	if [ "$skipinstalcomp" -eq 0 ]; then
-		if [ $automatic -eq 0 ] ; then
+	echo "Operation(s) :"
+	echo "	if command -v XXXX >/dev/null 2>&1"
+	echo
+	if [ $automatic -eq 0 ] ; then
 		echo Press ENTER key to continue !
 		read name
 		fi
@@ -322,11 +324,13 @@ echo 01_install_compilers.sh
 		sudo apt-get install libncurses-dev -y
 		sudo apt-get install libelf-dev -y
 		sudo apt-get install xsel -y
-		echo
 		fi
-	else
-		echo "Software check/install skip. (All OK or debug mode.)"
 	fi
+	echo
+	echo "	Time needed $(( SECONDS - start1 )) seconds to complete operation."
+	date1=$(date -d@$(( SECONDS - start1 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date1"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"

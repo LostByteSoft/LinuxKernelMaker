@@ -231,11 +231,12 @@ echo "The core/code program. Compile linux kernel."
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 08_makeinstall.sh
-	echo
+	start8=$SECONDS
 	a=config-$sub
 	b=initrd.img-$sub
 	c=System.map-$sub
 	d=vmlinuz-$sub
+	echo
 	if [ "$debug" -eq 1 ]; then
 		debug
 		echo "	a = $a"
@@ -254,17 +255,17 @@ echo 08_makeinstall.sh
 		esac
 		done
 		}
-	if [ "$skipmakeinstall" -eq 0 ]; then
+if [ "$skipmakeinstall" -eq 0 ]; then
 	echo "Make install new kernel. If green you need to reboot. (Approx. 2 min.)"
-	echo
-	echo "Operation(s) :"
-	echo sudo make install
-	echo "Kernel to install in system $var"
-	echo
-	if [ $automatic -eq 0 ] ; then
-		echo "Press ENTER key to continue !"
-		read name
-		fi
+		echo
+		echo "Operation(s) :"
+		echo "	sudo make install"
+		echo "	Kernel to install in system $var"
+		echo
+		if [ $automatic -eq 0 ] ; then
+			echo "Press ENTER key to continue !"
+			read name
+			fi
 	if [ "$automatic" -eq 0 ]; then
 		yes_or_no
 			if [ "$?" -eq 0 ]; then
@@ -276,7 +277,7 @@ echo 08_makeinstall.sh
 				echo NOT INSTALLED.
 			fi
 	else
-			if [ "$sudopasswordvar" -eq 0 ]; then
+				if [ "$sudopasswordvar" -eq 0 ]; then
 					echo INSTALL IN SYSTEM.
 					cd $dir/$var
 					echo $sudopassword | sudo -S make install
@@ -320,7 +321,7 @@ echo 08_makeinstall.sh
 	echo "${red}████████████████ File $d does not exist ERROR ████████████████${reset}"
 	primeerror=1
 	fi
-	if [ "$primeerror" -eq 1 ]; then
+		if [ "$primeerror" -eq 1 ]; then
 			echo
 			echo "	${red}████████████████████████████████████████████${reset}"
 			echo "	${red}██                                        ██${reset}"
@@ -334,9 +335,15 @@ echo 08_makeinstall.sh
 		else
 			echo
 			echo "Everything is green new kernel is installed."
-			echo
 		fi
+	else
+	echo "Make install new kernel. Skip"
 	fi
+	echo
+	echo "	Time needed $(( SECONDS - start8 )) seconds to complete operation."
+	date8=$(date -d@$(( SECONDS - start8 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date8"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"

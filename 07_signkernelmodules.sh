@@ -231,13 +231,15 @@ echo "The core/code program. Compile linux kernel."
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 07_signkernelmodules.sh
+	start7=$SECONDS
 	echo
-	if [ "$skipsignkernelmodules" -eq 0 ]; then
 	echo "Sign the Linux kernel modules. (Approx 3 min.)"
-	echo
-	echo "Operation(s) :"
-	echo sudo make modules_install
-	echo
+	if [ "$skipsignkernelmodules" -eq 0 ]; then
+		echo
+		echo "Operation(s) :"
+		echo "	sudo make modules"
+		#echo sudo make modules_install ## will install in system use option 08
+		echo
 	if [ $automatic -eq 0 ] ; then
 		echo "Press ENTER key to continue !"
 		read name
@@ -253,6 +255,10 @@ echo 07_signkernelmodules.sh
 		fi
 	echo
 	fi
+	echo "	Time needed $(( SECONDS - start7 )) seconds to complete operation."
+	date7=$(date -d@$(( SECONDS - start7 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date7"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"

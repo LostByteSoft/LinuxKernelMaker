@@ -240,12 +240,21 @@ echo 10_informations.sh
 	uname -r
 	echo
 	if [ "$primeerror" -eq "0" ]; then
+		if [ "$skipmakeinstall" -eq 0 ]; then
 		echo "	${blue}████████████████████████████████████████████${reset}"
 		echo "	${blue}██                                        ██${reset}"
 		echo "	${blue}██              NEED REBOOT               ██${reset}"
 		echo "	${blue}██                                        ██${reset}"
 		echo "	${blue}████████████████████████████████████████████${reset}"
 		echo
+		else
+		echo "	${blue}████████████████████████████████████████████${reset}"
+		echo "	${blue}██                                        ██${reset}"
+		echo "	${blue}██       Compiled but not installed       ██${reset}"
+		echo "	${blue}██                                        ██${reset}"
+		echo "	${blue}████████████████████████████████████████████${reset}"
+		echo
+		fi
 	else
 		echo "	${red}████████████████████████████████████████████${reset}"
 		echo "	${red}██                                        ██${reset}"

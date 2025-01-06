@@ -231,6 +231,7 @@ echo "The core/code program. Compile linux kernel."
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 02_extract.sh
+	start2=$SECONDS
 	echo
 	echo "https://www.cyberciti.biz/tips/compiling-linux-kernel-26.html"
 	echo "Get the latest Linux kernel source code"
@@ -240,8 +241,8 @@ echo 02_extract.sh
 	echo "same folder of $me"
 	echo
 	echo "Operation(s) :"
-	echo tar vxf "$var".tar.xz
-	echo cp "$var".tar.sign TO FOLDER "$var"
+	echo "	tar vxf "$var".tar.xz"
+	echo "	cp "$var".tar.sign TO FOLDER "$var""
 	echo
 	if [ -f "$FILEtarxz" ]; then
 		echo "${green} ████████████████ $FILEtarxz FILE OK ████████████████ ${reset}"
@@ -296,6 +297,10 @@ echo 02_extract.sh
 		echo DEBUG cp "$var".tar.sign "$var"
 		echo
 	fi
+	echo "	Time needed $(( SECONDS - start2 )) seconds to complete operation."
+	date2=$(date -d@$(( SECONDS - start2 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date2"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"

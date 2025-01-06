@@ -231,37 +231,38 @@ echo "The core/code program. Compile linux kernel."
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 06_compilekernel.sh
+	start6=$SECONDS
+	start61=$SECONDS
 	skipcompilekernel=0
-	if [ "$skipcompilekernel" -eq 0 ]; then
+	skipcompilekernel1=0
+	echo
 	if [ "$debug" -eq 1 ]; then
 		debug
 		echo "	Cores : $cores"
 		echo "	skipcompilekernel=$skipcompilekernel"
-		fi
-	FILE=$dir/$var/vmlinux
-		if [ -f $FILE ]; then
-		skipcompilekernel=1
-		fi
+		echo "	skipcompilekernel1=$skipcompilekernel1"
 		echo
-	FILE=$dir/$var/vmlinux.a
-		if [ -f $FILE ]; then
-		skipcompilekernel=1
 		fi
-		echo
-	FILE=$dir/$var/vmlinux.o
-		if [ -f $FILE ]; then
-		skipcompilekernel=1
-		fi
-	echo "Compile a Linux Kernel with $cores core. (Approx 60 min.)"
+		if [ -f $dir/$var/vmlinux ]; then
+			skipcompilekernel1=1
+			fi
+		if [ -f $dir/$var/vmlinux.a ]; then
+			skipcompilekernel1=1
+			fi
+		if [ -f $dir/$var/vmlinux.o ]; then
+			skipcompilekernel1=1
+			fi
+	if [ "$skipcompilekernel" -eq 0 ]; then
+	echo "Compile a Linux Kernel with $cores core. SILENT MODE (Approx 60 min.)"
 	echo
 	echo "Operation(s) :"
-	echo sudo make -s -j $cores
+	echo "	sudo make -s -j $cores (-s SILENT COMPILE -j CORE(S))"
 	echo
 	if [ $automatic -eq 0 ] ; then
-		echo "Press ENTER key to continue ! SILENT MODE"
+		echo "Press ENTER key to continue."
 		read name
 		fi
-	if [ "$debug" -eq 0 ]; then
+	if [ "$skipcompilekernel1" -eq 0 ]; then
 			if [ $sudopasswordvar -eq 0 ] ; then
 				cd $dir/$var
 				sudo make -s -j $cores	## Allow N jobs at once, faster than sudo make -s
@@ -269,15 +270,21 @@ echo 06_compilekernel.sh
 				cd ..
 			else
 				cd $dir/$var
-				#echo $sudopassword | sudo -S make -s -j $cores	## Allow N jobs at once, -s silent
-				echo $sudopassword | sudo -S make -j $cores	## Allow N jobs at once, faster with -j $cores
-				#sudo make -s		## infinite jobs with no arg, -s silent
+				#echo $sudopassword | sudo -S make -s		## -s silent
+				echo $sudopassword | sudo -S make -s -j $cores	## faster with -j $cores
 				cd ..
 			fi
 		else
-			echo DEBUG sudo make -s -j $cores
+			echo "	FILES vmlinux vmlinux.a vmlinux.o ALREADY in folder"
+			echo "	$dir/$var"
+			echo "	Erase them to compile new ones."
+			echo "	FILES vmlinux vmlinux.a vmlinux.o PRECOMPILED will be used."
+			echo
+			if [ $automatic -eq 0 ] ; then
+				echo "Press ENTER key to continue !"
+				read name
+				fi
 		fi
-	echo
 	FILE=$dir/$var/vmlinux
 	if [ -f $FILE ]; then
 		echo "${green}██ File $FILE exists. OK ██ ${reset}"
@@ -305,7 +312,7 @@ echo 06_compilekernel.sh
 			echo
 			echo "	${red}████████████████████████████████████████████${reset}"
 			echo "	${red}██                                        ██${reset}"
-			echo "	${red}██       ERROR MODULES NOT COMPILED       ██${reset}"
+			echo "	${red}██       ERROR KERNEL NOT COMPILED        ██${reset}"
 			echo "	${red}██                                        ██${reset}"
 			echo "	${red}████████████████████████████████████████████${reset}"
 			echo
@@ -317,10 +324,18 @@ echo 06_compilekernel.sh
 			debug=1
 		else
 			echo
-			echo "Everything is green you can continue."
+			echo "	${green}████████████████████████████████████████████${reset}"
+			echo "	${green}██                                        ██${reset}"
+			echo "	${green}██  Everything is green you can continue. ██${reset}"
+			echo "	${green}██                                        ██${reset}"
+			echo "	${green}████████████████████████████████████████████${reset}"
 			echo
 		fi
 	fi
+	echo "	Time needed $(( SECONDS - start6 )) seconds to complete operation."
+	date6=$(date -d@$(( SECONDS - start6 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date6"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"

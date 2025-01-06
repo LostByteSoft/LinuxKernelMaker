@@ -67,7 +67,7 @@ OPEN EACH FILE BEFORE EXECUTING, SOME VARIABLES NEED TO BE CHANGED.
 
 07_signkernelmodules.sh
 
-	sudo make modules_install: sudo make modules_install
+	sudo make modules: sudo make modules
 
 08_makeinstall.sh
 
@@ -75,7 +75,7 @@ OPEN EACH FILE BEFORE EXECUTING, SOME VARIABLES NEED TO BE CHANGED.
 
 09-makeheaders.sh
 
-	Non-mandatory operation.
+	DOES NOT WORK
 	Make headers for your drivers or extra: sudo make headers_install ARCH=x86_64 INSTALL_HDR_PATH=/usr/src/
 
 10_informations.sh
@@ -109,7 +109,7 @@ Usefull link
 This web site help me alot THANKS !
 
 	https://www.cyberciti.biz/tips/compiling-linux-kernel-26.html
-
+	
 Link to The Linux Kernel Archives
 	https://kernel.org/
 

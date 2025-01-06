@@ -231,26 +231,21 @@ echo "The core/code program. Compile linux kernel."
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 04_configboot.sh
+	start4=$SECONDS
 	echo
 	echo "Copy the Linux kernel features and modules (From the pre-existing file)"
 	echo
 	echo "Operation(s) :"
-	echo sudo cp -v /boot/config-$(uname -r) "$dir"/"$var"/.config
-	echo sudo gedit ""$dir"/"$var"/.config"
+	echo "	sudo cp -v /boot/config-$(uname -r) "$dir"/"$var"/.config"
+	echo "	sudo gedit ""$dir"/"$var"/.config""
 	echo
 	echo "You need to change this line in the .config file"
 	echo "File "$var"/.config will open in sudo"
 	echo
-	if command -v xsel >/dev/null 2>&1
-		then
-			echo CONFIG_DEBUG_INFO_BTF=n
-			echo
-			echo This data is in clipboard.
-			printf "CONFIG_DEBUG_INFO_BTF=" | xclip -sel clip
-		else
-			echo CONFIG_DEBUG_INFO_BTF=n
-			echo
-		fi
+	echo "This data is in clipboard."
+	printf "CONFIG_DEBUG_INFO_BTF=" | xclip -sel clip
+	echo "CONFIG_DEBUG_INFO_BTF="
+	echo
 	if [ $automatic -eq 0 ] ; then
 		echo "Press ENTER key to continue ! "
 		read name
@@ -260,14 +255,18 @@ echo 04_configboot.sh
 			sudo cp -v /boot/config-$(uname -r) $dir/$var/.config
 			sudo gedit $dir/$var/.config
 		else
-			cat /home/master/Desktop/kernel-v3/linux-6.12.7/.config | sed -e "s/CONFIG_DEBUG_INFO_BTF=y/CONFIG_DEBUG_INFO_BTF=n/" > /dev/shm/configMOD
-			cp -f /dev/shm/configMOD /home/master/Desktop/kernel-v3/linux-6.12.7/.config
-
+	echo $sudopassword | sudo -S cp -v /boot/config-$(uname -r) $dir/$var/.config
+	cat $dir/$var/.config | sed -e "s/CONFIG_DEBUG_INFO_BTF=y/CONFIG_DEBUG_INFO_BTF=n/" > /dev/shm/configMOD
+	echo $sudopassword | sudo -S cp -f /dev/shm/configMOD $dir/$var/.config
 			fi
 		else
 			echo DEBUG cp -v /boot/config-$(uname -r) "$dir/$var"/.config
 			echo DEBUG gedit $dir/$var/.config
 		fi
+	echo
+	echo "	Time needed $(( SECONDS - start4 )) seconds to complete operation."
+	date4=$(date -d@$(( SECONDS - start4 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date4"
 	echo
 
 part=$((part+1))

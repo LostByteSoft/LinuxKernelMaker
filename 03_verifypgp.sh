@@ -231,14 +231,15 @@ echo "The core/code program. Compile linux kernel."
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 03_verifypgp.sh
+	start3=$SECONDS
 	echo
 	echo "Verify pgp for signed kernel."
+	if [ "$skipgpg" -eq 0 ]; then
 	echo
 	echo "Operation(s) :"
-	echo "gpg2 --locate-keys torvalds@kernel.org gregkh@kernel.org"
-	echo "xz -cd $var.tar.xz | gpg2 --verify $var.tar.sign -"
+	echo "	gpg2 --locate-keys torvalds@kernel.org gregkh@kernel.org"
+	echo "	xz -cd $var.tar.xz | gpg2 --verify $var.tar.sign -"
 	echo
-	if [ "$skipgpg" -eq 0 ]; then
 		if [ $automatic -eq 0 ] ; then
 			echo "Press ENTER key to continue !"
 			read name
@@ -262,9 +263,11 @@ echo 03_verifypgp.sh
 			echo 'DEBUG xz -cd $var.tar.xz | gpg2 --verify $var.tar.sign -'
 			echo 'DEBUG xz -cd $var.tar.xz | gpg2 --verify $var.tar.sign -'
 		fi
-	else
-		echo "gpg2 verification skip."
 	fi
+	echo
+	echo "	Time needed $(( SECONDS - start3 )) seconds to complete operation."
+	date3=$(date -d@$(( SECONDS - start3 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date3"
 	echo
 
 part=$((part+1))

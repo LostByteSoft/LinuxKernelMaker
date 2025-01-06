@@ -231,6 +231,7 @@ echo "The core/code program. Compile linux kernel."
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo  09-makeheaders.sh
+	start9=$SECONDS
 	echo
 	linuxheaders=linux-headers-$sub
 	if [ "$skipheaders" -eq 0 ]; then
@@ -246,7 +247,7 @@ echo  09-makeheaders.sh
 			echo
 			fi
 	echo "Operation(s) :"
-	echo sudo make headers_install ARCH=x86_64 INSTALL_HDR_PATH=/usr/src/$linuxheaders
+	echo "	sudo make headers_install ARCH=x86_64 INSTALL_HDR_PATH=/usr/src/$linuxheaders"
 	## sudo make headers_install ARCH=x86_64 INSTALL_HDR_PATH=/usr/src/linux-headers-6.12.7
 	echo
 	if [ $automatic -eq 0 ] ; then
@@ -276,9 +277,13 @@ echo  09-makeheaders.sh
 	fi
 	echo
 	else
-		echo "Headers compile skip."
+		echo "Make headers compile. Skip."
 		echo
 	fi
+	echo "	Time needed $(( SECONDS - start9 )) seconds to complete operation."
+	date9=$(date -d@$(( SECONDS - start9 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date9"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"

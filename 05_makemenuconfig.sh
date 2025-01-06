@@ -231,11 +231,12 @@ echo "The core/code program. Compile linux kernel."
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
 echo 05_makemenuconfig.sh
+	start5=$SECONDS
 	echo
 	echo "Configuring the new "$var" kernel. (Approx. 10 sec.)"
 	echo
 	echo "Operation(s) :"
-	echo sudo make menuconfig
+	echo "	sudo make menuconfig"
 	echo
 	if [ $automatic -eq 0 ] ; then
 		echo "Press ENTER key to continue !"
@@ -247,12 +248,18 @@ echo 05_makemenuconfig.sh
 					sudo make menuconfig
 					cd ..
 				else
-					echo "Bypass automatic."
+					cd $dir/$var
+					sudo make menuconfig
+					cd ..
 				fi
 		else
 			echo DEBUG sudo make menuconfig
 			echo
 		fi
+	echo "	Time needed $(( SECONDS - start5 )) seconds to complete operation."
+	date5=$(date -d@$(( SECONDS - start5 )) -u +%H:%M:%S)
+	echo "	Time needed format H:M:S : $date5"
+	echo
 
 part=$((part+1))
 echo "-------------------------===== Section $part =====-------------------------"
